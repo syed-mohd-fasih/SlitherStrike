@@ -61,6 +61,7 @@ public class GamePanel extends JPanel implements ActionListener {
         super.paintComponent(g);
         drawHeader(g);
         drawGameArea(g);
+        drawActivePowerUps(g);
     }
 
     private void drawHeader(Graphics g) {
@@ -83,21 +84,56 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void drawGameArea(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.translate(0, 50);
+        int headerHeight = 50;
+
+        int totalGridWidth = GRID_WIDTH * BLOCK_SIZE;
+        int totalGridHeight = GRID_HEIGHT * BLOCK_SIZE;
+
+        int xOffset = (getWidth() - totalGridWidth) / 2;
+        int yOffset = headerHeight + ((getHeight() - headerHeight - totalGridHeight) / 2);
+
+        g2d.translate(xOffset, yOffset);
 
         g2d.setColor(Color.BLACK);
-        g2d.fillRect(0, 0, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
+        g2d.fillRect(0, 0, totalGridWidth, totalGridHeight);
 
         g2d.setColor(Color.DARK_GRAY);
         for (int x = 0; x <= GRID_WIDTH; x++) {
-            g2d.drawLine(x * BLOCK_SIZE, 0, x * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
+            g2d.drawLine(x * BLOCK_SIZE, 0, x * BLOCK_SIZE, totalGridWidth);
         }
         for (int y = 0; y <= GRID_HEIGHT; y++) {
-            g2d.drawLine(0, y * BLOCK_SIZE, GRID_WIDTH * BLOCK_SIZE, y * BLOCK_SIZE);
+            g2d.drawLine(0, y * BLOCK_SIZE, totalGridHeight, y * BLOCK_SIZE);
         }
 
         gameDraw(g2d);
         g2d.dispose();
+    }
+
+    private void drawActivePowerUps(Graphics g) {
+        java.util.List<PowerUp> activePowerUps = game.getActivePowerUps();
+
+        int startX = 20;
+        int startY = 55; // Just below the header
+        int cardWidth = 120;
+        int cardHeight = 30;
+        int padding = 10;
+
+        g.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        for (PowerUp powerUp : activePowerUps) {
+            g.setColor(new Color(70, 70, 70));
+            g.fillRoundRect(startX, startY, cardWidth, cardHeight, 10, 10);
+
+            g.setColor(Color.WHITE);
+            String text = switch (powerUp.getType()) {
+                case SPEED_UP -> "Speed Boost";
+                case INVINCIBILITY -> "Invincibility";
+                case DOUBLE_SCORE -> "Double Score";
+            };
+            g.drawString(text, startX + 10, startY + 20);
+
+            startX += cardWidth + padding;
+        }
     }
 
     private void gameDraw(Graphics2D g2d) {

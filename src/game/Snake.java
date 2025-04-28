@@ -67,9 +67,14 @@ public class Snake {
         pendingDirection = null; // Reset after applying
     }
 
-    // TODO
     public void increaseSpeed() {
-        speed -= 10;  // Increase the speed by decreasing the delay
+        if (speed > 20) {  // Cap to avoid too fast
+            speed -= 10;
+        }
+    }
+
+    public void resetSpeed() {
+        speed = 100;  // Reset to base speed
     }
 
     public int getSpeed() {

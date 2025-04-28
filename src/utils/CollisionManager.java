@@ -36,7 +36,9 @@ public class CollisionManager {
         Point head = snake.getBody().getFirst();
         for (PowerUp powerUp : powerUps) {
             if (head.equals(powerUp.getPosition())) {
-                powerUp.applyEffect(game);  // Apply power-up effect
+                // Apply the powerup using PowerUpManager
+                game.getPowerUpManager().applyPowerUp(powerUp);
+
                 toRemove.add(powerUp);
             }
         }

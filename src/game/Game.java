@@ -5,15 +5,16 @@ import utils.PowerUpManager;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 
 public class Game {
     private Snake snake;
     private Fruit fruit;
     private List<Obstacle> obstacles;
     private List<PowerUp> powerUps;
+    private List<PowerUp> activePowerUps;
     private ScoreManager scoreManager;
 
     private boolean gameOver;
@@ -23,12 +24,15 @@ public class Game {
 
     private PowerUpManager powerUpManager;
 
+    private static final long POWER_UP_DURATION = 5000; // 5 seconds
+
     public Game(int width, int height, String difficulty) {
         this.width = width;
         this.height = height;
         this.difficulty = difficulty;
         this.random = new Random();
-        this.powerUpManager = new PowerUpManager();
+        this.powerUpManager = new PowerUpManager(this);
+        this.activePowerUps = new ArrayList<>();
 
         reset();
     }
@@ -38,9 +42,9 @@ public class Game {
         fruit = spawnFruit();
         obstacles = new ArrayList<>();
         powerUps = new ArrayList<>();
+        activePowerUps.clear();
         scoreManager = new ScoreManager();
         gameOver = false;
-        powerUpManager.reset();
         spawnObstacles();
     }
 
@@ -57,8 +61,10 @@ public class Game {
         if (CollisionManager.checkWallCollision(snake, width, height)
                 || CollisionManager.checkSelfCollision(snake)
                 || CollisionManager.checkObstacleCollision(snake, obstacles)) {
-            gameOver = true;
-            return;
+            if (!hasActivePowerUp(PowerUp.Type.INVINCIBILITY)) {
+                gameOver = true;
+                return;
+            }
         }
 
         if (CollisionManager.checkFruitCollision(snake, fruit, scoreManager)) {
@@ -69,8 +75,8 @@ public class Game {
         CollisionManager.checkPowerUpCollision(snake, powerUps, toRemove, this);
         powerUps.removeAll(toRemove);
 
-        // PowerUp Manager controls spawn and removal
-        powerUpManager.update(this);
+        updateActivePowerUps();
+        powerUpManager.update();
     }
 
     private Fruit spawnFruit() {
@@ -98,6 +104,50 @@ public class Game {
         powerUps.add(PowerUp.generateRandomPowerUp(width, height));
     }
 
+    public void activatePowerUp(PowerUp powerUp) {
+        activePowerUps.add(powerUp);
+
+        switch (powerUp.getType()) {
+            case SPEED_UP -> snake.increaseSpeed();
+            case INVINCIBILITY -> {
+                // No immediate action, handled during collision checks
+            }
+            case DOUBLE_SCORE -> scoreManager.enableDoubleScore();
+        }
+    }
+
+    private void updateActivePowerUps() {
+        long currentTime = System.currentTimeMillis();
+        Iterator<PowerUp> iterator = activePowerUps.iterator();
+
+        while (iterator.hasNext()) {
+            PowerUp powerUp = iterator.next();
+            if (currentTime - powerUp.getActivationTime() > POWER_UP_DURATION) {
+                deactivatePowerUp(powerUp);
+                iterator.remove();
+            }
+        }
+    }
+
+    private void deactivatePowerUp(PowerUp powerUp) {
+        switch (powerUp.getType()) {
+            case SPEED_UP -> snake.resetSpeed();
+            case INVINCIBILITY -> {
+                // No persistent effect to undo
+            }
+            case DOUBLE_SCORE -> scoreManager.disableDoubleScore();
+        }
+    }
+
+    private boolean hasActivePowerUp(PowerUp.Type type) {
+        for (PowerUp p : activePowerUps) {
+            if (p.getType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Getters
     public Snake getSnake() {
         return snake;
@@ -117,6 +167,14 @@ public class Game {
 
     public ScoreManager getScoreManager() {
         return scoreManager;
+    }
+
+    public PowerUpManager getPowerUpManager() {
+        return powerUpManager;
+    }
+
+    public List<PowerUp> getActivePowerUps() {
+        return activePowerUps;
     }
 
     public String getDifficulty() {

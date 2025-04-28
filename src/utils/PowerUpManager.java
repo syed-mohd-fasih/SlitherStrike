@@ -1,25 +1,61 @@
 package utils;
 
-import game.Game;
-import game.PowerUp;
+import java.util.*;
 
-import java.util.Iterator;
-import java.util.Random;
+import game.*;
 
 public class PowerUpManager {
+    private final Game game;
+    private final Map<PowerUp.Type, ActivePowerUp> activePowerUps;
+    private final int duration = 7500; // 7.5 seconds
+
     private static final int MIN_SPAWN_INTERVAL = 10000; // 10 seconds
     private long lastSpawnTime = 0;
     private int spawnedPowerUpsCount = 0; // NEW: count how many spawned
-    private Random random = new Random();
+    private final Random random = new Random();
 
-    public void update(Game game) {
+    public PowerUpManager(Game game) {
+        this.game = game;
+        this.activePowerUps = new HashMap<>();
+    }
+
+    public void applyPowerUp(PowerUp powerUp) {
+        PowerUp.Type type = powerUp.getType();
+
+        if (activePowerUps.containsKey(type)) {
+            // Already active, reset timer
+            activePowerUps.get(type).resetTimer();
+        } else {
+            // New activation
+            activateEffect(type);
+            activePowerUps.put(type, new ActivePowerUp(type));
+        }
+    }
+
+    private void activateEffect(PowerUp.Type type) {
+        switch (type) {
+            case SPEED_UP -> game.getSnake().increaseSpeed();
+            case INVINCIBILITY -> game.getSnake().setInvincible(true);
+            case DOUBLE_SCORE -> game.getScoreManager().enableDoubleScore(); // (We'll fix ScoreManager)
+        }
+    }
+
+    private void deactivateEffect(PowerUp.Type type) {
+        switch (type) {
+            case SPEED_UP -> game.getSnake().resetSpeed();
+            case INVINCIBILITY -> game.getSnake().setInvincible(false);
+            case DOUBLE_SCORE -> game.getScoreManager().disableDoubleScore();
+        }
+    }
+
+    public void update() {
         long currentTime = System.currentTimeMillis();
 
-        // Remove expired powerups
-        Iterator<PowerUp> iterator = game.getPowerUps().iterator();
+        Iterator<Map.Entry<PowerUp.Type, ActivePowerUp>> iterator = activePowerUps.entrySet().iterator();
         while (iterator.hasNext()) {
-            PowerUp powerUp = iterator.next();
-            if (powerUp.isExpired()) {
+            Map.Entry<PowerUp.Type, ActivePowerUp> entry = iterator.next();
+            if (entry.getValue().isExpired()) {
+                deactivateEffect(entry.getKey());
                 iterator.remove();
             }
         }
@@ -61,8 +97,24 @@ public class PowerUpManager {
     }
 
     public void reset() {
-        // Call this when starting a new game/level
         spawnedPowerUpsCount = 0;
         lastSpawnTime = System.currentTimeMillis();
+        activePowerUps.clear();
+    }
+
+    private class ActivePowerUp {
+        private long activationTime;
+
+        public ActivePowerUp(PowerUp.Type type) {
+            this.activationTime = System.currentTimeMillis();
+        }
+
+        public boolean isExpired() {
+            return System.currentTimeMillis() - activationTime > duration;
+        }
+
+        public void resetTimer() {
+            activationTime = System.currentTimeMillis();
+        }
     }
 }
