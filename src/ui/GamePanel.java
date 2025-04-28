@@ -1,9 +1,6 @@
 package ui;
 
-import game.Game;
-import game.Snake;
-import game.Fruit;
-import game.PowerUp;
+import game.*;
 import utils.CollisionManager;
 import utils.TimeManager;
 import utils.ResourceManager;
@@ -138,7 +135,12 @@ public class GamePanel extends JPanel implements ActionListener {
             g2d.fillOval(powerUp.getPosition().x * BLOCK_SIZE, powerUp.getPosition().y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         }
 
-        // Obstacles will come later
+        // Draw Obstacles
+        g2d.setColor(new Color(0, 0, 139)); // Dark Blue Color
+        for (Obstacle obstacle : game.getObstacles()) {
+            Point pos = obstacle.getPosition();
+            g2d.fillRect(pos.x * BLOCK_SIZE, pos.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        }
     }
 
     @Override
