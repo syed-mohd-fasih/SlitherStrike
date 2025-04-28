@@ -1,4 +1,15 @@
 package game;
 
+import java.awt.*;
+
 public class Obstacle {
+    private Point position;
+
+    public Obstacle(int x, int y) {
+        position = new Point(x, y);
+    }
+
+    public Point getPosition() {
+        return position;
+    }
 }
