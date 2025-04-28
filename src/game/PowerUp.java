@@ -6,14 +6,18 @@ import java.util.Random;
 public class PowerUp {
     private Point position;
     private Type type;
+    private int duration;
+    private long spawnTime;
 
     public enum Type {
         SPEED_UP, INVINCIBILITY, DOUBLE_SCORE
     }
 
     public PowerUp(int x, int y, Type type) {
-        position = new Point(x, y);
+        this.position = new Point(x, y);
         this.type = type;
+        this.duration = 10000; // 10 seconds
+        this.spawnTime = System.currentTimeMillis();
     }
 
     public Point getPosition() {
@@ -24,22 +28,18 @@ public class PowerUp {
         return type;
     }
 
-    // Method to apply the power-up effect on the game
     public void applyEffect(Game game) {
         switch (type) {
-            case SPEED_UP:
-                game.getSnake().increaseSpeed();  // Implement this method in Snake class
-                break;
-            case INVINCIBILITY:
-                game.getSnake().setInvincible(true);  // Implement this method in Snake class
-                break;
-            case DOUBLE_SCORE:
-                game.getScoreManager().doubleScore();  // Implement this method in ScoreManager class
-                break;
+            case SPEED_UP -> game.getSnake().increaseSpeed();
+            case INVINCIBILITY -> game.getSnake().setInvincible(true);
+            case DOUBLE_SCORE -> game.getScoreManager().doubleScore();
         }
     }
 
-    // Randomly generate a power-up at a given position
+    public boolean isExpired() {
+        return System.currentTimeMillis() - spawnTime > duration;
+    }
+
     public static PowerUp generateRandomPowerUp(int gridWidth, int gridHeight) {
         Random rand = new Random();
         int x = rand.nextInt(gridWidth);

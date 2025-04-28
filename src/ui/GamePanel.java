@@ -1,9 +1,7 @@
 package ui;
 
 import game.*;
-import utils.CollisionManager;
 import utils.TimeManager;
-import utils.ResourceManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,10 +29,8 @@ public class GamePanel extends JPanel implements ActionListener {
         setBackground(Color.BLACK);
         setLayout(null);
 
-        // Initialize Game
-        game = new Game(GRID_WIDTH, GRID_HEIGHT, mode); // Add levels later
+        game = new Game(GRID_WIDTH, GRID_HEIGHT, selectedMode);
 
-        // Initialize Timer Manager
         timeManager = new TimeManager(selectedMode, this);
         timer = timeManager.getTimer();
 
@@ -45,18 +41,10 @@ public class GamePanel extends JPanel implements ActionListener {
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 switch (key) {
-                    case KeyEvent.VK_UP:
-                        game.getSnake().setDirection(Snake.Direction.UP);
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        game.getSnake().setDirection(Snake.Direction.DOWN);
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        game.getSnake().setDirection(Snake.Direction.LEFT);
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        game.getSnake().setDirection(Snake.Direction.RIGHT);
-                        break;
+                    case KeyEvent.VK_UP -> game.getSnake().setDirection(Snake.Direction.UP);
+                    case KeyEvent.VK_DOWN -> game.getSnake().setDirection(Snake.Direction.DOWN);
+                    case KeyEvent.VK_LEFT -> game.getSnake().setDirection(Snake.Direction.LEFT);
+                    case KeyEvent.VK_RIGHT -> game.getSnake().setDirection(Snake.Direction.RIGHT);
                 }
             }
         });
@@ -71,7 +59,6 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         drawHeader(g);
         drawGameArea(g);
     }
@@ -96,13 +83,11 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void drawGameArea(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.translate(0, 50); // Move down to make space for header
+        g2d.translate(0, 50);
 
-        // Draw background
         g2d.setColor(Color.BLACK);
         g2d.fillRect(0, 0, GRID_WIDTH * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
 
-        // Draw grid lines (optional, for better visibility)
         g2d.setColor(Color.DARK_GRAY);
         for (int x = 0; x <= GRID_WIDTH; x++) {
             g2d.drawLine(x * BLOCK_SIZE, 0, x * BLOCK_SIZE, GRID_HEIGHT * BLOCK_SIZE);
@@ -111,35 +96,37 @@ public class GamePanel extends JPanel implements ActionListener {
             g2d.drawLine(0, y * BLOCK_SIZE, GRID_WIDTH * BLOCK_SIZE, y * BLOCK_SIZE);
         }
 
-        // Draw snake, fruit, obstacles, and power-ups
         gameDraw(g2d);
-
         g2d.dispose();
     }
 
     private void gameDraw(Graphics2D g2d) {
-        // Draw Snake
+        // Snake
         g2d.setColor(Color.GREEN);
         for (Point p : game.getSnake().getBody()) {
             g2d.fillRect(p.x * BLOCK_SIZE, p.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         }
 
-        // Draw Fruit
+        // Fruit
         g2d.setColor(Color.RED);
         Point fruitPos = game.getFruit().getPosition();
         g2d.fillOval(fruitPos.x * BLOCK_SIZE, fruitPos.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
 
-        // Draw Power-Ups
-        g2d.setColor(Color.YELLOW);
-        for (PowerUp powerUp : game.getPowerUps()) {
-            g2d.fillOval(powerUp.getPosition().x * BLOCK_SIZE, powerUp.getPosition().y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-        }
-
-        // Draw Obstacles
-        g2d.setColor(new Color(0, 0, 139)); // Dark Blue Color
+        // Obstacles
+        g2d.setColor(new Color(0, 0, 139));
         for (Obstacle obstacle : game.getObstacles()) {
             Point pos = obstacle.getPosition();
             g2d.fillRect(pos.x * BLOCK_SIZE, pos.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        }
+
+        // PowerUps
+        for (PowerUp powerUp : game.getPowerUps()) {
+            switch (powerUp.getType()) {
+                case SPEED_UP -> g2d.setColor(Color.YELLOW);
+                case INVINCIBILITY -> g2d.setColor(Color.CYAN);
+                case DOUBLE_SCORE -> g2d.setColor(Color.MAGENTA);
+            }
+            g2d.fillOval(powerUp.getPosition().x * BLOCK_SIZE, powerUp.getPosition().y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         }
     }
 
@@ -149,23 +136,22 @@ public class GamePanel extends JPanel implements ActionListener {
         repaint();
 
         if (game.isGameOver()) {
-            timer.stop(); // Stop the game loop
+            timer.stop();
 
-            // Get parent panel and switch to GameOverPanel
             Container parent = getParent();
             if (parent instanceof JPanel) {
-                CardLayout cardLayout = (CardLayout) parent.getLayout();
+                CardLayout layout = (CardLayout) parent.getLayout();
                 JPanel mainPanel = (JPanel) parent;
 
                 GameOverPanel gameOverPanel = new GameOverPanel(
-                        username, // Hardcoded for now
+                        username,
                         selectedLevel,
                         selectedMode,
                         game.getScoreManager().getScore()
                 );
 
                 mainPanel.add(gameOverPanel, "GameOverPanel");
-                cardLayout.show(mainPanel, "GameOverPanel");
+                layout.show(mainPanel, "GameOverPanel");
             }
         }
     }

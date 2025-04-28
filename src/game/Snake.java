@@ -36,12 +36,6 @@ public class Snake {
 
     public void grow() {
         Point head = new Point(body.getFirst());
-        switch (direction) {
-            case UP -> head.y--;
-            case DOWN -> head.y++;
-            case LEFT -> head.x--;
-            case RIGHT -> head.x++;
-        }
         body.addFirst(head);
     }
 
