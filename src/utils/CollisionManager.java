@@ -6,7 +6,6 @@ import java.awt.*;
 import java.util.List;
 
 public class CollisionManager {
-
     public static boolean checkWallCollision(Snake snake, int width, int height) {
         Point head = snake.getBody().getFirst();
         return head.x < 0 || head.x >= width || head.y < 0 || head.y >= height;
@@ -36,7 +35,7 @@ public class CollisionManager {
         Point head = snake.getBody().getFirst();
         for (PowerUp powerUp : powerUps) {
             if (head.equals(powerUp.getPosition())) {
-                // Apply the powerup using PowerUpManager
+                // Apply the power up using PowerUpManager
                 game.getPowerUpManager().applyPowerUp(powerUp);
 
                 toRemove.add(powerUp);

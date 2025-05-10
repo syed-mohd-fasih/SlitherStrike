@@ -8,6 +8,7 @@ public class Snake {
     private Direction direction;
     private int speed;
     private boolean invincible;
+    private boolean visible = true;
     private Direction pendingDirection = null;
 
     public enum Direction {
@@ -68,11 +69,7 @@ public class Snake {
     }
 
     public void increaseSpeed() {
-        if (speed > 20) {  // Cap to avoid too fast
-            // Do nothing
-        } else {
-            speed += 5;
-        }
+        speed += 50;
     }
 
     public void resetSpeed() {
@@ -89,5 +86,13 @@ public class Snake {
 
     public void setInvincible(boolean invincible) {
         this.invincible = invincible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 }

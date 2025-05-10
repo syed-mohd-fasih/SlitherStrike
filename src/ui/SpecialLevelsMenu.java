@@ -18,21 +18,17 @@ public class SpecialLevelsMenu extends JPanel {
 
         // Add Special Level Buttons
         JButton invisibilityButton = createSpecialButton("Invisibility Mode");
-        JButton explodingFruitButton = createSpecialButton("Exploding Fruit");
-        JButton unlockableLevelsButton = createSpecialButton("Unlockable Levels");
-        JButton flipMapButton = createSpecialButton("Flip Map");
+        JButton unlockableLevelsButton = createSpecialButton("Unlockable Quadrants Mode");
+        JButton flipMapButton = createSpecialButton("Flip Map Mode");
         JButton nightModeButton = createSpecialButton("Night Mode");
-        JButton frozenTimeButton = createSpecialButton("Frozen Time");
-        JButton splitHeadsButton = createSpecialButton("Split Heads");
+        JButton splitHeadsButton = createSpecialButton("Split Heads Mode");
 
         // Action listeners for each button
         invisibilityButton.addActionListener(e -> showGameScreen("Invisibility Mode", mainPanel));
-        explodingFruitButton.addActionListener(e -> showGameScreen("Exploding Fruit", mainPanel));
-        unlockableLevelsButton.addActionListener(e -> showGameScreen("Unlockable Levels", mainPanel));
-        flipMapButton.addActionListener(e -> showGameScreen("Flip Map", mainPanel));
+        unlockableLevelsButton.addActionListener(e -> showGameScreen("Unlockable Quadrants Mode", mainPanel));
+        flipMapButton.addActionListener(e -> showGameScreen("Flip Map Mode", mainPanel));
         nightModeButton.addActionListener(e -> showGameScreen("Night Mode", mainPanel));
-        frozenTimeButton.addActionListener(e -> showGameScreen("Frozen Time", mainPanel));
-        splitHeadsButton.addActionListener(e -> showGameScreen("Split Heads", mainPanel));
+        splitHeadsButton.addActionListener(e -> showGameScreen("Split Heads Mode", mainPanel));
 
         // Back Button to navigate to the game mode menu
         JButton backButton = createButton("Back");
@@ -41,11 +37,9 @@ public class SpecialLevelsMenu extends JPanel {
         // Add components to layout
         add(titleLabel);
         add(invisibilityButton);
-        add(explodingFruitButton);
         add(unlockableLevelsButton);
         add(flipMapButton);
         add(nightModeButton);
-        add(frozenTimeButton);
         add(splitHeadsButton);
         add(Box.createRigidArea(new Dimension(0, 20)));
         add(backButton);

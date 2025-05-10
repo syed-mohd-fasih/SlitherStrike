@@ -12,4 +12,8 @@ public class Obstacle {
     public Point getPosition() {
         return position;
     }
+
+    public void setPosition(int x, int y) {
+        position.setLocation(x, y);
+    }
 }

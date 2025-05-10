@@ -36,7 +36,7 @@ public class PowerUpManager {
         switch (type) {
             case SPEED_UP -> game.getSnake().increaseSpeed();
             case INVINCIBILITY -> game.getSnake().setInvincible(true);
-            case DOUBLE_SCORE -> game.getScoreManager().enableDoubleScore(); // (We'll fix ScoreManager)
+            case DOUBLE_SCORE -> game.getScoreManager().enableDoubleScore();
         }
     }
 
@@ -80,10 +80,10 @@ public class PowerUpManager {
 
     private int getMaxPowerUpsForLevel(String difficulty) {
         return switch (difficulty.toLowerCase()) {
-            case "easy" -> 3;
-            case "medium" -> 5;
-            case "hard" -> 7;
-            default -> 3;
+            case "easy" -> 5;
+            case "medium" -> 10;
+            case "hard" -> 15;
+            default -> 12;
         };
     }
 

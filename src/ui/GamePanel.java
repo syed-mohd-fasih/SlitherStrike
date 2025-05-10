@@ -63,6 +63,11 @@ public class GamePanel extends JPanel implements ActionListener {
         drawHeader(g);
         drawGameArea(g);
         drawActivePowerUps(g);
+        Graphics2D g2d = (Graphics2D) g.create();
+        if (game.getCurrentSpecialLevel() != null && game.getCurrentSpecialLevel().isActive()) {
+            game.getCurrentSpecialLevel().render(g, g2d, game);
+        }
+        g2d.dispose();
     }
 
     private void drawHeader(Graphics g) {
@@ -126,6 +131,7 @@ public class GamePanel extends JPanel implements ActionListener {
                 case SPEED_UP -> Color.YELLOW;
                 case INVINCIBILITY -> Color.CYAN;
                 case DOUBLE_SCORE -> Color.MAGENTA;
+                default -> Color.BLACK;
             });
             g.fillRect(x, y, size, size);
 
@@ -139,9 +145,11 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private void gameDraw(Graphics2D g2d) {
         // Snake
-        g2d.setColor(Color.GREEN);
-        for (Point p : game.getSnake().getBody()) {
-            g2d.fillRect(p.x * BLOCK_SIZE, p.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        if (game.getSnake().isVisible()) {
+            g2d.setColor(Color.GREEN);
+            for (Point p : game.getSnake().getBody()) {
+                g2d.fillRect(p.x * BLOCK_SIZE, p.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            }
         }
 
         // Fruit

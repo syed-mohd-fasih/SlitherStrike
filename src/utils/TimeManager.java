@@ -19,7 +19,7 @@ public class TimeManager {
                 delay = 50;
                 break;
             default:
-                delay = 100;
+                delay = 120;
         }
         timer = new Timer(delay, actionListener);
     }

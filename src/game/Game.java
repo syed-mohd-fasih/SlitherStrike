@@ -1,9 +1,9 @@
 package game;
 
+import speciallevels.*;
 import utils.CollisionManager;
 import utils.PowerUpManager;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -13,37 +13,56 @@ public class Game {
     private List<Obstacle> obstacles;
     private List<PowerUp> powerUps;
     private List<PowerUp> activePowerUps;
-    private ScoreManager scoreManager;
 
     private boolean gameOver;
-    private int width, height;
-    private Random random;
-    private String difficulty;
+    private final int width, height;
+    private final Random random;
+    private final String difficulty;
 
-    private PowerUpManager powerUpManager;
+    private final ScoreManager scoreManager;
+    private final PowerUpManager powerUpManager;
+
+    private SpecialLevelMode currentSpecialLevel;
 
     private static final long POWER_UP_DURATION = 5000; // 5 seconds
 
     public Game(int width, int height, String difficulty) {
         this.width = width;
         this.height = height;
-        this.difficulty = difficulty;
         this.random = new Random();
+        this.difficulty = difficulty;
+
         this.powerUpManager = new PowerUpManager(this);
+        this.scoreManager = new ScoreManager();
+
         this.activePowerUps = new ArrayList<>();
 
-        reset();
-    }
+        this.snake = new Snake();
+        this.fruit = spawnFruit();
+        this.obstacles = new ArrayList<>();
+        this.powerUps = new ArrayList<>();
 
-    public void reset() {
-        snake = new Snake();
-        fruit = spawnFruit();
-        obstacles = new ArrayList<>();
-        powerUps = new ArrayList<>();
-        activePowerUps.clear();
-        scoreManager = new ScoreManager();
         gameOver = false;
+
         spawnObstacles();
+
+        switch (difficulty) {
+            case "Invisibility Mode":
+                activateSpecialLevel(new InvisibilityMode());
+                break;
+            case "Unlockable Quadrants Mode":
+                activateSpecialLevel(new UnlockableQuadrantsMode());
+                break;
+            case "Flip Map Mode":
+                activateSpecialLevel(new FlipMapMode());
+                break;
+            case "Night Mode":
+                activateSpecialLevel(new NightMode());
+                break;
+            case "Split Heads Mode":
+                activateSpecialLevel(new SplitHeadsMode());
+                break;
+        }
     }
 
     public void update() {
@@ -53,8 +72,6 @@ public class Game {
             snake.applyPendingDirection();
         }
         snake.move();
-
-        Point head = snake.getBody().getFirst();
 
         if (CollisionManager.checkWallCollision(snake, width, height)
                 || CollisionManager.checkSelfCollision(snake)
@@ -75,20 +92,41 @@ public class Game {
 
         updateActivePowerUps();
         powerUpManager.update();
+
+        if (currentSpecialLevel != null && currentSpecialLevel.isActive()) {
+            currentSpecialLevel.update(this);
+        }
     }
 
     private Fruit spawnFruit() {
-        int x = random.nextInt(width);
-        int y = random.nextInt(height);
+        int x, y;
+
+        if (difficulty.equals("Unlockable Quadrants Mode")) {
+            int score = scoreManager.getScore();
+            if (score < 500) {
+                x = random.nextInt(width / 2);
+                y = random.nextInt(height / 2);
+            } else if (score < 1000) {
+                x = random.nextInt(width);
+                y = random.nextInt(height / 2);
+            } else {
+                x = random.nextInt(width);
+                y = random.nextInt(height);
+            }
+            return new Fruit(x, y);
+        }
+
+        x = random.nextInt(width);
+        y = random.nextInt(height);
         return new Fruit(x, y);
     }
 
     private void spawnObstacles() {
         int count = switch (difficulty) {
-            case "easy" -> 3;
-            case "medium" -> 6;
-            case "hard" -> 10;
-            default -> 3;
+            case "Easy" -> 5;
+            case "Medium" -> 10;
+            case "Hard" -> 15;
+            default -> 12;
         };
 
         for (int i = 0; i < count; i++) {
@@ -99,20 +137,25 @@ public class Game {
     }
 
     public void spawnPowerUp() {
-        powerUps.add(PowerUp.generateRandomPowerUp(width, height));
-    }
+        int x = width;
+        int y = height;
 
-//    public void activatePowerUp(PowerUp powerUp) {
-//        activePowerUps.add(powerUp);
-//
-//        switch (powerUp.getType()) {
-//            case SPEED_UP -> snake.increaseSpeed();
-//            case INVINCIBILITY -> {
-//                // No immediate action, handled during collision checks
-//            }
-//            case DOUBLE_SCORE -> scoreManager.enableDoubleScore();
-//        }
-//    }
+        if (difficulty.equals("Unlockable Quadrants Mode")) {
+            int score = scoreManager.getScore();
+            if (score < 500) {
+                x = width / 2;
+                y = height / 2;
+            } else if (score < 1000) {
+                x = width;
+                y = height / 2;
+            } else {
+                x = width;
+                y = height;
+            }
+        }
+
+        powerUps.add(PowerUp.generateRandomPowerUp(x, y));
+    }
 
     private void updateActivePowerUps() {
         long currentTime = System.currentTimeMillis();
@@ -144,6 +187,11 @@ public class Game {
             }
         }
         return false;
+    }
+
+    public void activateSpecialLevel(SpecialLevelMode mode) {
+        this.currentSpecialLevel = mode;
+        mode.activate(this);
     }
 
     // Getters
@@ -185,5 +233,21 @@ public class Game {
 
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    public SpecialLevelMode getCurrentSpecialLevel() {
+        return currentSpecialLevel;
+    }
+
+    public void setGameOver(boolean b) {
+        gameOver = b;
+    }
+
+    public int getMapHeight() {
+        return height;
+    }
+
+    public int getMapWidth() {
+        return width;
     }
 }

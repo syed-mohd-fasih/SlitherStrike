@@ -5,12 +5,12 @@ import java.util.Random;
 
 public class PowerUp {
     private Point position;
-    private Type type;
-    private long spawnTime;
+    private final Type type;
+    private final long spawnTime;
     private long activationTime;
 
     public enum Type {
-        SPEED_UP, INVINCIBILITY, DOUBLE_SCORE, EXPLODING_FRUIT, FREEZE_TIME
+        SPEED_UP, INVINCIBILITY, DOUBLE_SCORE//, EXPLODING_FRUIT, FREEZE_TIME
     }
 
     public PowerUp(int x, int y, Type type) {
@@ -21,6 +21,10 @@ public class PowerUp {
 
     public Point getPosition() {
         return position;
+    }
+
+    public void setPosition(int x, int y) {
+        position.setLocation(x, y);
     }
 
     public Type getType() {

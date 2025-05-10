@@ -10,7 +10,7 @@ public class MainMenu extends JFrame {
     public MainMenu() {
         setTitle("Snake Game - Main Menu");
         setSize(1280, 720);  // Default window size, can scale
-        setResizable(true);  // Make the window resizable
+        setResizable(false);  // Make the window not resizable
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null); // Center on screen
 
@@ -65,7 +65,7 @@ public class MainMenu extends JFrame {
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
         button.setFont(new Font("Arial", Font.PLAIN, 20));
-        button.setPreferredSize(new Dimension(250, 60));  // Use preferred size instead of fixed size
+        button.setPreferredSize(new Dimension(250, 60));
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
