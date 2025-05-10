@@ -4,10 +4,8 @@ import utils.CollisionManager;
 import utils.PowerUpManager;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class Game {
     private Snake snake;
@@ -104,17 +102,17 @@ public class Game {
         powerUps.add(PowerUp.generateRandomPowerUp(width, height));
     }
 
-    public void activatePowerUp(PowerUp powerUp) {
-        activePowerUps.add(powerUp);
-
-        switch (powerUp.getType()) {
-            case SPEED_UP -> snake.increaseSpeed();
-            case INVINCIBILITY -> {
-                // No immediate action, handled during collision checks
-            }
-            case DOUBLE_SCORE -> scoreManager.enableDoubleScore();
-        }
-    }
+//    public void activatePowerUp(PowerUp powerUp) {
+//        activePowerUps.add(powerUp);
+//
+//        switch (powerUp.getType()) {
+//            case SPEED_UP -> snake.increaseSpeed();
+//            case INVINCIBILITY -> {
+//                // No immediate action, handled during collision checks
+//            }
+//            case DOUBLE_SCORE -> scoreManager.enableDoubleScore();
+//        }
+//    }
 
     private void updateActivePowerUps() {
         long currentTime = System.currentTimeMillis();
@@ -175,6 +173,10 @@ public class Game {
 
     public List<PowerUp> getActivePowerUps() {
         return activePowerUps;
+    }
+
+    public Map<PowerUp.Type, Long> getActivePowerUpTimers() {
+        return powerUpManager.getActivePowerUpTimers();
     }
 
     public String getDifficulty() {

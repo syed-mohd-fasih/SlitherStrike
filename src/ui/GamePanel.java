@@ -6,6 +6,7 @@ import utils.TimeManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Map;
 
 public class GamePanel extends JPanel implements ActionListener {
 
@@ -110,29 +111,29 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void drawActivePowerUps(Graphics g) {
-        java.util.List<PowerUp> activePowerUps = game.getActivePowerUps();
+        Map<PowerUp.Type, Long> activeTimers = game.getActivePowerUpTimers();
 
-        int startX = 20;
-        int startY = 55; // Just below the header
-        int cardWidth = 120;
-        int cardHeight = 30;
-        int padding = 10;
+        int x = 20;
+        int y = 60;
+        int size = 32;
 
-        g.setFont(new Font("Arial", Font.PLAIN, 14));
+        for (Map.Entry<PowerUp.Type, Long> entry : activeTimers.entrySet()) {
+            PowerUp.Type type = entry.getKey();
+            long remaining = entry.getValue() / 1000;
 
-        for (PowerUp powerUp : activePowerUps) {
-            g.setColor(new Color(70, 70, 70));
-            g.fillRoundRect(startX, startY, cardWidth, cardHeight, 10, 10);
+            // Draw icon (placeholder color)
+            g.setColor(switch (type) {
+                case SPEED_UP -> Color.YELLOW;
+                case INVINCIBILITY -> Color.CYAN;
+                case DOUBLE_SCORE -> Color.MAGENTA;
+            });
+            g.fillRect(x, y, size, size);
 
-            g.setColor(Color.WHITE);
-            String text = switch (powerUp.getType()) {
-                case SPEED_UP -> "Speed Boost";
-                case INVINCIBILITY -> "Invincibility";
-                case DOUBLE_SCORE -> "Double Score";
-            };
-            g.drawString(text, startX + 10, startY + 20);
+            // Draw timer text
+            g.setColor(Color.BLACK);
+            g.drawString(remaining + "s", x + 5, y + size + 15);
 
-            startX += cardWidth + padding;
+            x += size + 15;
         }
     }
 

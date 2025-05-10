@@ -117,4 +117,19 @@ public class PowerUpManager {
             activationTime = System.currentTimeMillis();
         }
     }
+
+    public Map<PowerUp.Type, Long> getActivePowerUpTimers() {
+        Map<PowerUp.Type, Long> timers = new HashMap<>();
+        long currentTime = System.currentTimeMillis();
+
+        for (Map.Entry<PowerUp.Type, ActivePowerUp> entry : activePowerUps.entrySet()) {
+            long remaining = duration - (currentTime - entry.getValue().activationTime);
+            if (remaining > 0) {
+                timers.put(entry.getKey(), remaining);
+            }
+        }
+
+        return timers;
+    }
+
 }

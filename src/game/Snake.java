@@ -69,7 +69,9 @@ public class Snake {
 
     public void increaseSpeed() {
         if (speed > 20) {  // Cap to avoid too fast
-            speed -= 10;
+            // Do nothing
+        } else {
+            speed += 5;
         }
     }
 
