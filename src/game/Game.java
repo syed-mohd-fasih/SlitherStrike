@@ -56,12 +56,6 @@ public class Game {
             case "Flip Map Mode":
                 activateSpecialLevel(new FlipMapMode());
                 break;
-            case "Night Mode":
-                activateSpecialLevel(new NightMode());
-                break;
-            case "Split Heads Mode":
-                activateSpecialLevel(new SplitHeadsMode());
-                break;
         }
     }
 
