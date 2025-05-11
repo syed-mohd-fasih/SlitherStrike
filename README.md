@@ -1,4 +1,4 @@
-# 🐍 Slither Strike - Advanced Snake Game
+# 🐍 Slither Strike - A Snake Game Made with Java Swing
 
 Slither Strike is a modern, feature-rich take on the classic Snake game, developed in Java using Swing. It introduces
 new gameplay mechanics like power-ups, special levels, login support, and a polished user interface with custom graphics
