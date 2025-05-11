@@ -1,6 +1,7 @@
 package ui;
 
 import user.UserManager;
+import utils.ResourceManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,9 +34,19 @@ public class MainMenu extends JFrame {
     }
 
     private JPanel createMainMenuPanel() {
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(30, 30, 30));
+        Image background = ResourceManager.MAIN_BG;
+
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (background != null) {
+                    g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false); // Let the background image show properly
 
         JLabel titleLabel = new JLabel("Snake Game");
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);

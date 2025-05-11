@@ -1,13 +1,28 @@
 package ui;
 
+import utils.ResourceManager;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class GameOverPanel extends JPanel {
 
     public GameOverPanel(String username, String level, String difficulty, int score) {
-        setBackground(new Color(30, 30, 30));
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+//        setBackground(new Color(30, 30, 30));
+//        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        Image background = ResourceManager.GAME_OVER_BG;
+
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (background != null) {
+                    g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
 
         // Title
         JLabel titleLabel = new JLabel("Game Over");
@@ -55,12 +70,15 @@ public class GameOverPanel extends JPanel {
         });
 
         // Add everything
-        add(titleLabel);
-        add(userLabel);
-        add(levelLabel);
-        add(difficultyLabel);
-        add(scoreLabel);
-        add(Box.createRigidArea(new Dimension(0, 30)));
-        add(backButton);
+        panel.add(titleLabel);
+        panel.add(userLabel);
+        panel.add(levelLabel);
+        panel.add(difficultyLabel);
+        panel.add(scoreLabel);
+        panel.add(Box.createRigidArea(new Dimension(0, 30)));
+        panel.add(backButton);
+
+        setLayout(new BorderLayout());
+        add(panel, BorderLayout.CENTER);
     }
 }

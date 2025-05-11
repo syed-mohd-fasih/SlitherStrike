@@ -102,16 +102,8 @@ public class GamePanel extends JPanel implements ActionListener {
 
         g2d.translate(xOffset, yOffset);
 
-        g2d.setColor(Color.BLACK);
-        g2d.fillRect(0, 0, totalGridWidth, totalGridHeight);
-
-        g2d.setColor(Color.DARK_GRAY);
-        for (int x = 0; x <= GRID_WIDTH; x++) {
-            g2d.drawLine(x * BLOCK_SIZE, 0, x * BLOCK_SIZE, totalGridWidth);
-        }
-        for (int y = 0; y <= GRID_HEIGHT; y++) {
-            g2d.drawLine(0, y * BLOCK_SIZE, totalGridHeight, y * BLOCK_SIZE);
-        }
+        Image gamebg = ResourceManager.GAME_BG;
+        g2d.drawImage(gamebg, 0, 0, totalGridWidth, totalGridHeight, null);
 
         gameDraw(g2d);
         g2d.dispose();
@@ -155,9 +147,49 @@ public class GamePanel extends JPanel implements ActionListener {
     private void gameDraw(Graphics2D g2d) {
         // Snake
         if (game.getSnake().isVisible()) {
-            g2d.setColor(Color.GREEN);
-            for (Point p : game.getSnake().getBody()) {
-                g2d.fillRect(p.x * BLOCK_SIZE, p.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            java.util.List<Point> body = game.getSnake().getBody();
+            if (!body.isEmpty()) {
+                Point head = game.getSnake().getBody().get(0);
+                Image headImage = ResourceManager.SNAKE_HEAD;
+                Image bodyImage = ResourceManager.SNAKE_BODY;
+
+                if (headImage != null) {
+                    // Convert direction to angle
+                    double angle = switch (game.getSnake().getDirection()) {
+                        case UP -> 0;
+                        case RIGHT -> Math.PI / 2;
+                        case DOWN -> Math.PI;
+                        case LEFT -> -Math.PI / 2;
+                    };
+                    Graphics2D gCopyHead = (Graphics2D) g2d.create();
+
+                    // Rotate and draw the image
+                    int x = head.x * BLOCK_SIZE;
+                    int y = head.y * BLOCK_SIZE;
+
+                    // Rotate around center
+                    gCopyHead.rotate(angle, x + BLOCK_SIZE / 2.0, y + BLOCK_SIZE / 2.0);
+                    gCopyHead.drawImage(headImage, x, y, BLOCK_SIZE, BLOCK_SIZE, null);
+                    gCopyHead.dispose();
+                } else {
+                    // fallback if image is missing
+                    g2d.setColor(Color.GREEN);
+                    g2d.fillRect(head.x * BLOCK_SIZE, head.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                }
+
+                // Draw the rest of the body
+                Graphics2D gCopyBody = (Graphics2D) g2d.create();
+                g2d.setColor(new Color(60, 196, 50));
+                for (int i = 1; i < body.size(); i++) {
+                    Point p = body.get(i);
+                    if (bodyImage != null) {
+                        gCopyBody.drawImage(bodyImage, p.x * BLOCK_SIZE, p.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, null);
+                    } else {
+                        g2d.fillRect(p.x * BLOCK_SIZE, p.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                    }
+                }
+
+                gCopyBody.dispose();
             }
         }
 
@@ -180,10 +212,15 @@ public class GamePanel extends JPanel implements ActionListener {
 
 
         // Obstacles
-        g2d.setColor(new Color(0, 0, 139));
+        Image rockImage = ResourceManager.OBSTACLE_ICON;
         for (Obstacle obstacle : game.getObstacles()) {
-            Point pos = obstacle.getPosition();
-            g2d.fillRect(pos.x * BLOCK_SIZE, pos.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            Point obstaclePosition = obstacle.getPosition();
+            if (rockImage != null) {
+                g2d.drawImage(rockImage, obstaclePosition.x * BLOCK_SIZE, obstaclePosition.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE, null);
+            } else {
+                g2d.setColor(new Color(0, 0, 0));
+                g2d.fillRect(obstaclePosition.x * BLOCK_SIZE, obstaclePosition.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            }
         }
 
         // PowerUps

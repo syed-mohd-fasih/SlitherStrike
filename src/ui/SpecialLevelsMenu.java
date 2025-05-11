@@ -1,13 +1,29 @@
 package ui;
 
+import utils.ResourceManager;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class SpecialLevelsMenu extends JPanel {
 
     public SpecialLevelsMenu(CardLayout cardLayout, JPanel mainPanel) {
-        setBackground(new Color(30, 30, 30));
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+//        setBackground(new Color(30, 30, 30));
+//        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        Image background = ResourceManager.MAIN_BG;
+
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (background != null) {
+                    g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
 
         // Title
         JLabel titleLabel = new JLabel("Special Levels");
@@ -31,12 +47,15 @@ public class SpecialLevelsMenu extends JPanel {
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "GameModeMenu"));
 
         // Add components to layout
-        add(titleLabel);
-        add(invisibilityButton);
-        add(unlockableLevelsButton);
-        add(flipMapButton);
-        add(Box.createRigidArea(new Dimension(0, 20)));
-        add(backButton);
+        panel.add(titleLabel);
+        panel.add(invisibilityButton);
+        panel.add(unlockableLevelsButton);
+        panel.add(flipMapButton);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        panel.add(backButton);
+
+        setLayout(new BorderLayout());
+        add(panel, BorderLayout.CENTER);
     }
 
     private void showGameScreen(String mode, JPanel mainPanel) {

@@ -1,5 +1,7 @@
 package ui;
 
+import utils.ResourceManager;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,8 +14,19 @@ public class FreePlayLevelMenu extends JPanel {
         this.cardLayout = cardLayout;
         this.mainPanel = mainPanel;
 
-        setBackground(new Color(30, 30, 30));
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        Image background = ResourceManager.MAIN_BG;
+
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (background != null) {
+                    g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
 
         // Title
         JLabel titleLabel = new JLabel("Free Play");
@@ -23,24 +36,27 @@ public class FreePlayLevelMenu extends JPanel {
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 40, 0));
 
         // Add Level Sections
-        addLevelSection("Level 1");
-        addLevelSection("Level 2");
-        addLevelSection("Level 3");
-        addLevelSection("Level 4");
+        addLevelSection("Level 1", panel);
+        addLevelSection("Level 2", panel);
+        addLevelSection("Level 3", panel);
+        addLevelSection("Level 4", panel);
 
         // Back Button to navigate to the GameModeMenu
         JButton backButton = createButton("Back");
         backButton.addActionListener(e -> cardLayout.show(mainPanel, "GameModeMenu"));
 
         // Add components to layout
-        add(Box.createRigidArea(new Dimension(0, 20)));
-        add(backButton);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+        panel.add(backButton);
+
+        setLayout(new BorderLayout());
+        add(panel, BorderLayout.CENTER);
     }
 
-    private void addLevelSection(String level) {
+    private void addLevelSection(String level, JPanel panel) {
         // Panel for each level
         JPanel levelPanel = new JPanel();
-        levelPanel.setBackground(new Color(50, 50, 50));
+        levelPanel.setBackground(new Color(0, 0, 0, 0));
         levelPanel.setLayout(new BoxLayout(levelPanel, BoxLayout.Y_AXIS));
 
         JLabel levelLabel = new JLabel(level);
@@ -66,7 +82,7 @@ public class FreePlayLevelMenu extends JPanel {
         levelPanel.add(hardButton);
 
         // Add the level panel to the main layout
-        add(levelPanel);
+        panel.add(levelPanel);
     }
 
     private JButton createDifficultyButton(String text) {

@@ -1,6 +1,7 @@
 package ui;
 
 import user.UserManager;
+import utils.ResourceManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,15 +12,24 @@ public class LoginScreen extends JPanel {
     private JTextField usernameField;
     private JButton loginButton;
     private JLabel messageLabel;
-    private CardLayout cardLayout;
-    private JPanel mainPanel;
 
     public LoginScreen(CardLayout cardLayout, JPanel mainPanel) {
-        this.cardLayout = cardLayout;
-        this.mainPanel = mainPanel;
+//        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+//        setBackground(new Color(45, 45, 45));
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(new Color(45, 45, 45));
+        Image background = ResourceManager.MAIN_BG;
+
+        JPanel panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (background != null) {
+                    g.drawImage(background, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setOpaque(false);
 
         // Title label
         JLabel titleLabel = new JLabel("Login");
@@ -27,12 +37,11 @@ public class LoginScreen extends JPanel {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
-        add(titleLabel);
 
         // Username input field
         JPanel usernamePanel = new JPanel();
         usernamePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        usernamePanel.setBackground(new Color(45, 45, 45));
+        usernamePanel.setBackground(new Color(0, 0, 0, 0));
 
         JLabel usernameLabel = new JLabel("Username: ");
         usernameLabel.setForeground(Color.WHITE);
@@ -43,14 +52,11 @@ public class LoginScreen extends JPanel {
         usernameField.setFont(new Font("Arial", Font.PLAIN, 18));
         usernamePanel.add(usernameField);
 
-        add(usernamePanel);
-
         // Message label for feedback
         messageLabel = new JLabel();
         messageLabel.setForeground(Color.RED);
         messageLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(messageLabel);
 
         // Login button
         loginButton = new JButton("Login");
@@ -85,7 +91,13 @@ public class LoginScreen extends JPanel {
             }
         });
 
-        add(loginButton);
-        add(Box.createRigidArea(new Dimension(0, 20)));
+        panel.add(titleLabel);
+        panel.add(usernamePanel);
+        panel.add(messageLabel);
+        panel.add(loginButton);
+        panel.add(Box.createRigidArea(new Dimension(0, 20)));
+
+        setLayout(new BorderLayout());
+        add(panel, BorderLayout.CENTER);
     }
 }
