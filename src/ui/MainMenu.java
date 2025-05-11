@@ -48,7 +48,7 @@ public class MainMenu extends JFrame {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setOpaque(false); // Let the background image show properly
 
-        JLabel titleLabel = new JLabel("Snake Game");
+        JLabel titleLabel = new JLabel("Slither Strike");
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 32));
