@@ -49,7 +49,7 @@ public class UserManager {
         }
     }
 
-    private static void loadUsers() {
+    public static void loadUsers() {
         File file = new File(DATA_FILE);
         if (!file.exists()) return; // Do nothing if file doesn't exist
 

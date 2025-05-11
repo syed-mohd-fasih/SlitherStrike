@@ -37,6 +37,7 @@ public class PowerUpManager {
             case SPEED_UP -> game.getSnake().increaseSpeed();
             case INVINCIBILITY -> game.getSnake().setInvincible(true);
             case DOUBLE_SCORE -> game.getScoreManager().enableDoubleScore();
+            case EXPLODING_FRUIT -> game.getScoreManager().resetScore();
         }
     }
 
@@ -94,12 +95,6 @@ public class PowerUpManager {
             case "hard" -> 50;    // 50% chance
             default -> 20;
         };
-    }
-
-    public void reset() {
-        spawnedPowerUpsCount = 0;
-        lastSpawnTime = System.currentTimeMillis();
-        activePowerUps.clear();
     }
 
     private class ActivePowerUp {

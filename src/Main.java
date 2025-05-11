@@ -1,3 +1,5 @@
+import utils.ResourceManager;
+
 public class Main {
     public static void main(String[] args) {
         // Always start GUI apps on Event Dispatch Thread

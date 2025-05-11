@@ -16,6 +16,10 @@ public class ScoreManager {
         score += points;
     }
 
+    public void resetScore() {
+        score = 0;
+    }
+
     public int getScore() {
         return score;
     }

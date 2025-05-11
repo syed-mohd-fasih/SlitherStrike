@@ -10,7 +10,7 @@ public class PowerUp {
     private long activationTime;
 
     public enum Type {
-        SPEED_UP, INVINCIBILITY, DOUBLE_SCORE//, EXPLODING_FRUIT, FREEZE_TIME
+        SPEED_UP, INVINCIBILITY, DOUBLE_SCORE, EXPLODING_FRUIT
     }
 
     public PowerUp(int x, int y, Type type) {

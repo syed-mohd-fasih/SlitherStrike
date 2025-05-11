@@ -73,10 +73,11 @@ public class Game {
         if (CollisionManager.checkWallCollision(snake, width, height)
                 || CollisionManager.checkSelfCollision(snake)
                 || CollisionManager.checkObstacleCollision(snake, obstacles)) {
-            if (!hasActivePowerUp(PowerUp.Type.INVINCIBILITY)) {
+            if (!snake.isInvincible()) {
                 gameOver = true;
                 UserManager.getCurrentUser().setHighScore(level, difficulty, scoreManager.getScore());
                 UserManager.saveUsers();
+                UserManager.loadUsers();
                 return;
             }
         }
@@ -89,7 +90,6 @@ public class Game {
         CollisionManager.checkPowerUpCollision(snake, powerUps, toRemove, this);
         powerUps.removeAll(toRemove);
 
-        updateActivePowerUps();
         powerUpManager.update();
 
         if (currentSpecialLevel != null && currentSpecialLevel.isActive()) {
@@ -154,29 +154,6 @@ public class Game {
         }
 
         powerUps.add(PowerUp.generateRandomPowerUp(x, y));
-    }
-
-    private void updateActivePowerUps() {
-        long currentTime = System.currentTimeMillis();
-        Iterator<PowerUp> iterator = activePowerUps.iterator();
-
-        while (iterator.hasNext()) {
-            PowerUp powerUp = iterator.next();
-            if (currentTime - powerUp.getActivationTime() > POWER_UP_DURATION) {
-                deactivatePowerUp(powerUp);
-                iterator.remove();
-            }
-        }
-    }
-
-    private void deactivatePowerUp(PowerUp powerUp) {
-        switch (powerUp.getType()) {
-            case SPEED_UP -> snake.resetSpeed();
-            case INVINCIBILITY -> {
-                // No persistent effect to undo
-            }
-            case DOUBLE_SCORE -> scoreManager.disableDoubleScore();
-        }
     }
 
     private boolean hasActivePowerUp(PowerUp.Type type) {

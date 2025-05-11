@@ -75,8 +75,6 @@ public class LoginScreen extends JPanel {
                         messageLabel.setForeground(Color.GREEN);
                         messageLabel.setText("Login Successful!");
 
-                        System.out.println(UserManager.getCurrentUser().getUsername());
-
                         // After successful login, switch to the next panel (Main Menu)
                         cardLayout.show(mainPanel, "GameModeMenu");
                     } else {

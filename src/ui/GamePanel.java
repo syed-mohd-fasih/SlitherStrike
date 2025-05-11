@@ -2,6 +2,7 @@ package ui;
 
 import game.*;
 import user.UserManager;
+import utils.ResourceManager;
 import utils.TimeManager;
 
 import javax.swing.*;
@@ -128,16 +129,23 @@ public class GamePanel extends JPanel implements ActionListener {
             long remaining = entry.getValue() / 1000;
 
             // Draw icon (placeholder color)
-            g.setColor(switch (type) {
-                case SPEED_UP -> Color.YELLOW;
-                case INVINCIBILITY -> Color.CYAN;
-                case DOUBLE_SCORE -> Color.MAGENTA;
-                default -> Color.BLACK;
-            });
-            g.fillRect(x, y, size, size);
+            Image icon = switch (type) {
+                case SPEED_UP -> ResourceManager.BOLT_ICON;
+                case INVINCIBILITY -> ResourceManager.SHIELD_ICON;
+                case DOUBLE_SCORE -> ResourceManager.DOUBLE_ICON;
+                case EXPLODING_FRUIT -> ResourceManager.BOMB_ICON;
+                default -> null;
+            };
+
+            if (icon != null) {
+                g.drawImage(icon, x, y, size, size, null);
+            } else {
+                g.setColor(Color.GRAY); // Fallback in case image fails
+                g.fillRect(x, y, size, size);
+            }
 
             // Draw timer text
-            g.setColor(Color.BLACK);
+            g.setColor(Color.WHITE);
             g.drawString(remaining + "s", x + 5, y + size + 15);
 
             x += size + 15;
@@ -153,10 +161,23 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
 
-        // Fruit
-        g2d.setColor(Color.RED);
+        // Fruit with image
+        Image fruitImage = ResourceManager.FRUIT_ICON;
         Point fruitPos = game.getFruit().getPosition();
-        g2d.fillOval(fruitPos.x * BLOCK_SIZE, fruitPos.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+
+        if (fruitImage != null) {
+            g2d.drawImage(fruitImage,
+                    fruitPos.x * BLOCK_SIZE,
+                    fruitPos.y * BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    null);
+        } else {
+            // fallback if image fails
+            g2d.setColor(Color.RED);
+            g2d.fillOval(fruitPos.x * BLOCK_SIZE, fruitPos.y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+        }
+
 
         // Obstacles
         g2d.setColor(new Color(0, 0, 139));
@@ -167,12 +188,22 @@ public class GamePanel extends JPanel implements ActionListener {
 
         // PowerUps
         for (PowerUp powerUp : game.getPowerUps()) {
-            switch (powerUp.getType()) {
-                case SPEED_UP -> g2d.setColor(Color.YELLOW);
-                case INVINCIBILITY -> g2d.setColor(Color.CYAN);
-                case DOUBLE_SCORE -> g2d.setColor(Color.MAGENTA);
+            int drawX = powerUp.getPosition().x * BLOCK_SIZE;
+            int drawY = powerUp.getPosition().y * BLOCK_SIZE;
+            Image icon = switch (powerUp.getType()) {
+                case SPEED_UP -> ResourceManager.BOLT_ICON;
+                case INVINCIBILITY -> ResourceManager.SHIELD_ICON;
+                case DOUBLE_SCORE -> ResourceManager.DOUBLE_ICON;
+                case EXPLODING_FRUIT -> ResourceManager.BOMB_ICON;
+            };
+
+            if (icon != null) {
+                g2d.drawImage(icon, drawX, drawY, BLOCK_SIZE, BLOCK_SIZE, null);
+            } else {
+                // fallback shape if image fails
+                g2d.setColor(Color.GRAY);
+                g2d.fillOval(drawX, drawY, BLOCK_SIZE, BLOCK_SIZE);
             }
-            g2d.fillOval(powerUp.getPosition().x * BLOCK_SIZE, powerUp.getPosition().y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
         }
     }
 
