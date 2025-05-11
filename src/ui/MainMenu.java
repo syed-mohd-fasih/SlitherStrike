@@ -1,5 +1,7 @@
 package ui;
 
+import user.UserManager;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -8,7 +10,7 @@ public class MainMenu extends JFrame {
     private JPanel mainPanel;
 
     public MainMenu() {
-        setTitle("Snake Game - Main Menu");
+        setTitle("Slither Strike - Main Menu");
         setSize(1280, 720);  // Default window size, can scale
         setResizable(false);  // Make the window not resizable
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -24,6 +26,7 @@ public class MainMenu extends JFrame {
         mainPanel.add(new FreePlayLevelMenu(cardLayout, mainPanel), "FreePlayLevelMenu");
         mainPanel.add(new SpecialLevelsMenu(cardLayout, mainPanel), "SpecialLevelsMenu");
         mainPanel.add(new ScoreCard(cardLayout, mainPanel), "ScoreCard");
+        mainPanel.add(new LoginScreen(cardLayout, mainPanel), "LoginScreen");
 
         add(mainPanel);
         setVisible(true);
@@ -44,7 +47,16 @@ public class MainMenu extends JFrame {
         JButton scorecardButton = createButton("Scorecard");
         JButton exitButton = createButton("Exit");
 
-        playButton.addActionListener(e -> cardLayout.show(mainPanel, "GameModeMenu"));
+        playButton.addActionListener(e -> {
+            // Check if a user is logged in
+            if (UserManager.getCurrentUser() != null) {
+                // If the user is logged in, go to the GameModeMenu panel
+                cardLayout.show(mainPanel, "GameModeMenu");
+            } else {
+                // If the user is not logged in, show the LoginScreen
+                cardLayout.show(mainPanel, "LoginScreen");
+            }
+        });
         scorecardButton.addActionListener(e -> cardLayout.show(mainPanel, "ScoreCard"));
         exitButton.addActionListener(e -> System.exit(0));
 

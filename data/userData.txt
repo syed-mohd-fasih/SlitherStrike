@@ -1,0 +1,5 @@
+fakhur: 3|Easy|400;Level 1|Easy|400;Level 2|Medium|400;Level 4|Hard|400;Special Level|Unlockable Quadrants Mode|200;
+jane_doe:Level 1|Medium|200;Level 3|Medium|200;Level 2|Medium|200;Level 4|Easy|200;Special Level|Flip Map Mode|400;
+john_doe:Level 1|Easy|100;Level 3|Medium|100;Level 2|Easy|100;Level 4|Medium|100;Special Level|Flip Map Mode|500;
+abdullah:Level 1|Hard|300;Level 3|Hard|300;Level 2|Hard|300;Level 4|Medium|300;Special Level|Flip Map Mode|300;
+fasih:Level 1|Easy|80;Level 1|Medium|10;Level 3|Easy|500;Level 2|Hard|500;Level 4|Medium|500;Special Level|Invisibility Mode|100;

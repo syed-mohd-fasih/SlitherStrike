@@ -1,6 +1,7 @@
 package game;
 
 import speciallevels.*;
+import user.UserManager;
 import utils.CollisionManager;
 import utils.PowerUpManager;
 
@@ -18,6 +19,7 @@ public class Game {
     private final int width, height;
     private final Random random;
     private final String difficulty;
+    private final String level;
 
     private final ScoreManager scoreManager;
     private final PowerUpManager powerUpManager;
@@ -26,11 +28,12 @@ public class Game {
 
     private static final long POWER_UP_DURATION = 5000; // 5 seconds
 
-    public Game(int width, int height, String difficulty) {
+    public Game(int width, int height, String level, String difficulty) {
         this.width = width;
         this.height = height;
         this.random = new Random();
         this.difficulty = difficulty;
+        this.level = level;
 
         this.powerUpManager = new PowerUpManager(this);
         this.scoreManager = new ScoreManager();
@@ -72,6 +75,8 @@ public class Game {
                 || CollisionManager.checkObstacleCollision(snake, obstacles)) {
             if (!hasActivePowerUp(PowerUp.Type.INVINCIBILITY)) {
                 gameOver = true;
+                UserManager.getCurrentUser().setHighScore(level, difficulty, scoreManager.getScore());
+                UserManager.saveUsers();
                 return;
             }
         }

@@ -1,6 +1,7 @@
 package ui;
 
 import game.*;
+import user.UserManager;
 import utils.TimeManager;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     private String selectedLevel;
     private String selectedMode;
-    private String username = "Player1";
+    private String username = UserManager.getCurrentUser().getUsername();
 
     private Timer timer;
     private Game game;
@@ -30,7 +31,7 @@ public class GamePanel extends JPanel implements ActionListener {
         setBackground(Color.BLACK);
         setLayout(null);
 
-        game = new Game(GRID_WIDTH, GRID_HEIGHT, selectedMode);
+        game = new Game(GRID_WIDTH, GRID_HEIGHT, level, selectedMode);
 
         timeManager = new TimeManager(selectedMode, this);
         timer = timeManager.getTimer();

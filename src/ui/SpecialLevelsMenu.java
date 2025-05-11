@@ -20,15 +20,11 @@ public class SpecialLevelsMenu extends JPanel {
         JButton invisibilityButton = createSpecialButton("Invisibility Mode");
         JButton unlockableLevelsButton = createSpecialButton("Unlockable Quadrants Mode");
         JButton flipMapButton = createSpecialButton("Flip Map Mode");
-        JButton nightModeButton = createSpecialButton("Night Mode");
-        JButton splitHeadsButton = createSpecialButton("Split Heads Mode");
 
         // Action listeners for each button
         invisibilityButton.addActionListener(e -> showGameScreen("Invisibility Mode", mainPanel));
         unlockableLevelsButton.addActionListener(e -> showGameScreen("Unlockable Quadrants Mode", mainPanel));
         flipMapButton.addActionListener(e -> showGameScreen("Flip Map Mode", mainPanel));
-        nightModeButton.addActionListener(e -> showGameScreen("Night Mode", mainPanel));
-        splitHeadsButton.addActionListener(e -> showGameScreen("Split Heads Mode", mainPanel));
 
         // Back Button to navigate to the game mode menu
         JButton backButton = createButton("Back");
@@ -39,8 +35,6 @@ public class SpecialLevelsMenu extends JPanel {
         add(invisibilityButton);
         add(unlockableLevelsButton);
         add(flipMapButton);
-        add(nightModeButton);
-        add(splitHeadsButton);
         add(Box.createRigidArea(new Dimension(0, 20)));
         add(backButton);
     }
